@@ -6,22 +6,22 @@ then
   git clone --depth 1 "$GIT_REPO" . || exit 1
 fi
 
-# Generate and verify nginx config
-envsubst < /template.conf > /etc/nginx/conf.d/default.conf
-nginx -t || exit 1
+# Generate and verify caddy config
+envsubst < /Caddyfile_template > /etc/caddy/Caddyfile
+caddy validate --config /etc/caddy/Caddyfile|| exit 1
 
-# Start nginx in background
-nginx -g "daemon off;" &
-nginxPid=$!
+# Start caddy in background
+caddy run --config /etc/caddy/Caddyfile &
+caddyPid=$!
 sleepPid=
 
 # Forward signals to blocking processes
 stop() {
-  kill -s "$1" "$nginxPid"
+  kill -s "$1" "$caddyPid"
   if test "$1" != "SIGHUP"
   then
-    # We're expecting nginx to stop
-    wait "$nginxPid"
+    # We're expecting caddy to stop
+    wait "$caddyPid"
   fi
   kill -s "$1" "$sleepPid"
 }
@@ -31,8 +31,8 @@ trap 'stop SIGINT' SIGINT
 trap 'stop SIGQUIT' SIGQUIT
 trap 'stop SIGTERM' SIGTERM
 
-# While nginx is running
-while kill -0 "$nginxPid"
+# While caddy is running
+while kill -0 "$caddyPid"
 do
   git pull
   git submodule update --init --recursive
