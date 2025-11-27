@@ -11,7 +11,7 @@
 }
 
 # Setup defaults for file server
-http://localhost:80 {
+:80 {
     root * /usr/share/caddy/html$SUBDIR
 
     # Access logs
