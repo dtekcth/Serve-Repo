@@ -1,15 +1,14 @@
-FROM nginx:1.23.2-alpine
+FROM caddy:2.10.2-alpine
 
 RUN apk update && apk add \
       git \
       gettext
-WORKDIR /usr/share/nginx/html
-RUN rm -r *
-COPY template.conf /template.conf
+WORKDIR /usr/share/caddy/html
+COPY Caddyfile_template /Caddyfile_template
 COPY runner.sh /runner.sh
 
 ENV SUBDIR /
-ENV LOCATION_CFG ""
+ENV FILE_SERVER_CFG ""
 ENV SERVER_CFG ""
 ENV INTERVAL 3600
 

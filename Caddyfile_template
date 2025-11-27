@@ -1,0 +1,34 @@
+# Global settings
+{
+    admin off
+
+    # Runtime logs
+    log default {
+        output stdout
+        format console
+        level  INFO
+    }
+}
+
+# Setup defaults for file server
+http://localhost:80 {
+    root * /usr/share/caddy/html$SUBDIR
+
+    # Access logs
+    log default {
+        output stdout
+        format console
+        level  INFO
+    }
+
+    # Enable compression
+    encode
+
+    file_server {
+        # Allow custom config for the file server specifically
+        $FILE_SERVER_CFG
+    }
+
+    # Allow custom config for the server
+    $SERVER_CFG
+}
